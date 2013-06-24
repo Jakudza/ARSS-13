@@ -24,7 +24,10 @@ import ar.de.tum.gamelogic.FruitSpawner.Emission;
 import ar.de.tum.resources.BottleResources;
 import ar.de.tum.resources.FruitResources;
 import ar.de.tum.resources.GameScoreResources;
+import ar.de.tum.resources.PoseReceiverShaker;
+import ar.de.tum.resources.Shaker;
 import ar.tum.de.gameengine.CocktailGameEngine;
+import ar.tum.de.gameengine.CollisionDetector;
 import ar.tum.de.gameengine.GameEngine;
 import ar.tum.de.gameengine.GameRule;
 import ar.tum.de.gameengine.GameScore;
@@ -58,15 +61,18 @@ public class Runner implements GameConstants {
 //	private CubeObject cubeObject;
 	private ModelObject sheepObject;
 	
-	private PoseReceiver poseReceiver;
+	private PoseReceiverShaker shakerPoseReceiver;
 	private PoseReceiver poseReceiver2;
 	private ImageReceiver imageReceiver;
 	
 	private GameEngine gameEngine;
 	private FruitSpawner spawner;
+	private Shaker shaker;
+	private CollisionDetector detector;
 	
 	public Runner() {
 		ubitrackFacade = new UbitrackFacade();
+		shaker = new Shaker();
 	}
 
 	public static void main(String[] args) {
@@ -82,8 +88,8 @@ public class Runner implements GameConstants {
 	private void initializeUbitrack() {
 		ubitrackFacade.initUbitrack();
 		
-		poseReceiver = new PoseReceiver();
-		if (!ubitrackFacade.setPoseCallback("posesink", poseReceiver)) {
+		shakerPoseReceiver = new PoseReceiverShaker();
+		if (!ubitrackFacade.setPoseCallback("posesink", shakerPoseReceiver)) {
 			return;
 		}
 		poseReceiver2 = new PoseReceiver();
@@ -99,6 +105,7 @@ public class Runner implements GameConstants {
 		viewer.addObject(backgroundObject);
 		imageReceiver.setBackground(backgroundObject.getBackground());
 		
+		shaker.setPoseReceiver(shakerPoseReceiver);
 	//	poseReceiver.setTransformGroup(cubeObject.getTransformGroup());		
 		poseReceiver2.setTransformGroup(sheepObject.getTransformGroup());		
 
@@ -138,7 +145,7 @@ public class Runner implements GameConstants {
 	private void initializeJava3D() {
 		System.out.println("Creating Viewer - " + GAME);
 		viewer = new ViewerUbitrack(GAME, ubitrackFacade);
-
+		viewer.addObject(shaker.getJ3dObject());
 		BlueAppearance blueAppearance = new BlueAppearance();
 		
 	//	cubeObject = new CubeObject(0.023f, 0.023f, 0.023f, blueAppearance);
@@ -156,7 +163,7 @@ public class Runner implements GameConstants {
 		gameEngine = new CocktailGameEngine(successRule, failRule, receipt);
 		
 		spawner = new FruitSpawner(Emission.XSLOW, new MainIngredientFactory(receipt.copy(), new BaseRandomChoiceStrategy()), this);
-		
+		spawner.setShaker(shaker);
 		Timer timer = new Timer();
 		TimerTask task = new TimerTask() {
 			
@@ -185,8 +192,8 @@ public class Runner implements GameConstants {
 		spawner.update(delta);
 	}
 	
-	public void addFruit(Fruit fruit){
-		sheepObject.getTransformGroup().addChild(fruit);
+	public void addFruit(BranchGroup bg){
+		sheepObject.getTransformGroup().addChild(bg);
 	}	
 	
 }

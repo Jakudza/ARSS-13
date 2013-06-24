@@ -3,10 +3,14 @@ package ar.de.tum.gamelogic;
 import java.util.Random;
 
 import javax.media.j3d.Alpha;
+import javax.media.j3d.BranchGroup;
 import javax.media.j3d.PositionInterpolator;
 import javax.media.j3d.Transform3D;
+import javax.media.j3d.TransformGroup;
 import javax.vecmath.Vector3d;
 
+import ar.de.tum.resources.Shaker;
+import ar.tum.de.gameengine.CollisionDetector;
 import ar.tum.de.main.Runner;
 
 public class FruitSpawner {
@@ -16,6 +20,7 @@ public class FruitSpawner {
 	public static final int xGridCount = 4;
 	public static final int yGridCount = 4;
 	private Random rand = new Random();
+	private CollisionDetector detector;
 	
 	public enum Emission {
 		XFAST(500f), FAST(1000f), MEDIUM(1500f), SLOW(3000f), XSLOW(6000f);
@@ -40,8 +45,10 @@ public class FruitSpawner {
 	private double[][] xgrid;
 	private double[][] ygrid;
 	private long time;
+	private Shaker shaker;
 	
 	public FruitSpawner(Emission rate, IngredientFactory factory, Runner runner) {
+		detector = null;
 		this.rate = rate;
 		this.factory =  factory;
 		this.runner = runner;
@@ -57,6 +64,16 @@ public class FruitSpawner {
 		}
 	}
 	
+	public void setDetector(CollisionDetector d)
+	{
+		detector = d;
+	}
+	
+	public void setShaker(Shaker s)
+	{
+		shaker = s;
+	}
+	
 	public void update(long delta) {
 		time += delta;
 		if (time > nextFruitTime) {
@@ -64,6 +81,12 @@ public class FruitSpawner {
 			time = 0;
 			
 			Fruit fruit = factory.getFruit();
+			
+			BranchGroup bg = new BranchGroup();
+			bg.setCapability(TransformGroup.ENABLE_COLLISION_REPORTING);
+			bg.setCapability(TransformGroup.ENABLE_PICK_REPORTING);
+			detector = new CollisionDetector(bg);
+			
 			Transform3D t3dOffset = new Transform3D();
 			int x = rand.nextInt(xGridCount);
 			int y = rand.nextInt(yGridCount);
@@ -75,7 +98,14 @@ public class FruitSpawner {
 			Alpha xAlpha = new Alpha( -1, Alpha.DECREASING_ENABLE | Alpha.INCREASING_ENABLE, 1000, 1000, 5000, 1000, 1000, 10000, 2000, 4000 );
 			PositionInterpolator posInt = new PositionInterpolator(xAlpha, fruit.getTransformGroup(), xAxis, -0.8f, 0.8f );
 			fruit.getTransformGroup().addChild(posInt);
-			runner.addFruit(fruit);
+			bg.addChild(fruit);
+			detector = new CollisionDetector(bg);
+			bg.addChild(detector);
+			
+			fruit.registerWithShaker(shaker);
+			shaker.regisetWithCollisionDetector(detector);
+			runner.addFruit(bg);
+
 		}
 	}
 }

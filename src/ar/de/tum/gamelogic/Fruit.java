@@ -1,7 +1,12 @@
 package ar.de.tum.gamelogic;
 
+
+
 import de.tum.in.far.threedui.general.BlueAppearance;
 import ar.de.tum.resources.FruitResources;
+import ar.de.tum.resources.Notifiable;
+import ar.de.tum.resources.Shaker;
+import ar.tum.de.gameengine.CollisionDetector;
 import ar.tum.de.main.CubeObject;
 
 public class Fruit extends CubeObject {
@@ -44,6 +49,10 @@ public class Fruit extends CubeObject {
 
 	private Type type;
 
+	private boolean deleteFruit = false;
+
+	private Shaker shaker;
+
 	private static FruitResources R;
 
 	public static void setResources(FruitResources r) {
@@ -58,6 +67,44 @@ public class Fruit extends CubeObject {
 
 	public Type getType() {
 		return type;
+	}
+
+	public void registerWithCollisionDetector(CollisionDetector detector) {
+		detector.addObserver(new Notifiable() {
+			public void update(Object notifier, Object aData) {
+				if (aData instanceof Boolean)
+				handleCollisionInteraction(((Boolean)aData).booleanValue());
+			}
+		});
+		
+	}
+
+	protected void handleCollisionInteraction(boolean booleanValue) {
+		// TODO Auto-generated method stub
+		// Delete fruit here.
+		System.out.print("Collision, print from fruit");
+		deleteFruit  = true;
+		
+	}
+
+	public void registerWithShaker(Shaker s) {
+		// TODO Auto-generated method stub
+		shaker = s;
+		shaker.addObserver(new Notifiable() {			
+			public void update(Object notifier, Object aData) {
+				if (true == (Boolean)aData) {
+					handleShakerInteraction();
+				}				
+			}
+		});
+				
+//		shaker.addShakerPoseObserver(poseUpdater);
+		
+	}
+
+	protected void handleShakerInteraction() {
+		// TODO Auto-generated method stub
+		
 	}
 }
 
