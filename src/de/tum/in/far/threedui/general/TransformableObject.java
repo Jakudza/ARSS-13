@@ -12,6 +12,7 @@ public class TransformableObject extends BranchGroup {
 		transGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 		transGroup.setCapability(TransformGroup.ALLOW_CHILDREN_EXTEND);
 		transGroup.setCapability(TransformGroup.ALLOW_CHILDREN_WRITE);
+		transGroup.setCapability(BranchGroup.ALLOW_DETACH);
 		addChild(transGroup);
 	}
 	

@@ -194,6 +194,12 @@ public class Runner implements GameConstants {
 	
 	public void addFruit(BranchGroup bg){
 		sheepObject.getTransformGroup().addChild(bg);
+	}
+
+	public void removeFruit(BranchGroup b) {
+		// TODO Auto-generated method stub
+		sheepObject.getTransformGroup().removeChild(b);
+		
 	}	
 	
 }

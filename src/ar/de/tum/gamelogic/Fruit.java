@@ -2,6 +2,8 @@ package ar.de.tum.gamelogic;
 
 
 
+import javax.media.j3d.BranchGroup;
+
 import de.tum.in.far.threedui.general.BlueAppearance;
 import ar.de.tum.resources.FruitResources;
 import ar.de.tum.resources.Notifiable;
@@ -53,8 +55,10 @@ public class Fruit extends CubeObject {
 
 	private Shaker shaker;
 
-	private static FruitResources R;
+	private BranchGroup bg;
 
+	private static FruitResources R;
+	
 	public static void setResources(FruitResources r) {
 		R = r;
 	}
@@ -69,22 +73,18 @@ public class Fruit extends CubeObject {
 		return type;
 	}
 
-	public void registerWithCollisionDetector(CollisionDetector detector) {
-		detector.addObserver(new Notifiable() {
-			public void update(Object notifier, Object aData) {
-				if (aData instanceof Boolean)
-				handleCollisionInteraction(((Boolean)aData).booleanValue());
-			}
-		});
-		
+	public boolean getDeleteFruit()
+	{
+		return deleteFruit;
 	}
-
-	protected void handleCollisionInteraction(boolean booleanValue) {
-		// TODO Auto-generated method stub
-		// Delete fruit here.
-		System.out.print("Collision, print from fruit");
-		deleteFruit  = true;
-		
+	
+	public void setBranchGroup(BranchGroup bg)
+	{
+		this.bg = bg;
+	}
+	public BranchGroup getBranchGroup()
+	{
+		return bg;
 	}
 
 	public void registerWithShaker(Shaker s) {
@@ -104,7 +104,8 @@ public class Fruit extends CubeObject {
 
 	protected void handleShakerInteraction() {
 		// TODO Auto-generated method stub
-		
+		System.out.print("Collision, print from fruit");
+		deleteFruit  = true;
 	}
 }
 

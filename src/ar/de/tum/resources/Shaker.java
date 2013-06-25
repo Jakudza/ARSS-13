@@ -5,6 +5,7 @@ import java.util.Vector;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.TransformGroup;
 
+import ar.de.tum.gamelogic.Receipt;
 import ar.tum.de.gameengine.CollisionDetector;
 import ar.tum.de.gameengine.NotifyTransformGroup;
 
@@ -18,9 +19,10 @@ public class Shaker implements Notifiable {
 	private Vector<Notifiable> observer;
 	private NotifyTransformGroup shakerTransformGroup;
 	private PoseReceiverShaker shakerReceiver;
-
+	private Receipt receipt;
 	public Shaker()
 	{
+		receipt = null;
 		j3dObject = new shakerJ3DObject();
 		shakerBranchGroup = new BranchGroup();
 		shakerTransformGroup = new NotifyTransformGroup();
@@ -36,6 +38,11 @@ public class Shaker implements Notifiable {
 		observer = new Vector<Notifiable>();
 	}
 
+	public void setReceipt(Receipt r)
+	{
+		receipt = r;
+	}
+	
 	public void setPoseReceiver(PoseReceiverShaker p) {
 		shakerReceiver = p;
 		p.setObserver(this);

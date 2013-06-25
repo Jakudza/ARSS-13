@@ -1,5 +1,8 @@
 package ar.de.tum.gamelogic;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import javax.media.j3d.Alpha;
@@ -21,6 +24,7 @@ public class FruitSpawner {
 	public static final int yGridCount = 4;
 	private Random rand = new Random();
 	private CollisionDetector detector;
+	private List<Fruit> fruits;
 	
 	public enum Emission {
 		XFAST(500f), FAST(1000f), MEDIUM(1500f), SLOW(3000f), XSLOW(6000f);
@@ -41,6 +45,7 @@ public class FruitSpawner {
 	private IngredientFactory factory;
 	private Emission rate;
 	private float nextFruitTime;
+	private float clearTime;
 	private Runner runner;
 	private double[][] xgrid;
 	private double[][] ygrid;
@@ -49,6 +54,7 @@ public class FruitSpawner {
 	
 	public FruitSpawner(Emission rate, IngredientFactory factory, Runner runner) {
 		detector = null;
+		fruits = new ArrayList<Fruit>();
 		this.rate = rate;
 		this.factory =  factory;
 		this.runner = runner;
@@ -85,6 +91,7 @@ public class FruitSpawner {
 			BranchGroup bg = new BranchGroup();
 			bg.setCapability(TransformGroup.ENABLE_COLLISION_REPORTING);
 			bg.setCapability(TransformGroup.ENABLE_PICK_REPORTING);
+			bg.setCapability(BranchGroup.ALLOW_DETACH);
 			detector = new CollisionDetector(bg);
 			
 			Transform3D t3dOffset = new Transform3D();
@@ -101,11 +108,25 @@ public class FruitSpawner {
 			bg.addChild(fruit);
 			detector = new CollisionDetector(bg);
 			bg.addChild(detector);
-			
+			fruit.setBranchGroup(bg);
 			fruit.registerWithShaker(shaker);
 			shaker.regisetWithCollisionDetector(detector);
 			runner.addFruit(bg);
-
+			
+			fruits.add(fruit);
+		}
+		
+		if(time>nextFruitTime/2){
+		for(Iterator<Fruit> it = fruits.iterator(); it.hasNext(); )
+		{
+			// set proper condition here
+			if(it.next().getDeleteFruit())
+			{
+				BranchGroup b = it.next().getBranchGroup(); 
+				it.remove();
+				runner.removeFruit(b);
+			}
+		}
 		}
 	}
 }
