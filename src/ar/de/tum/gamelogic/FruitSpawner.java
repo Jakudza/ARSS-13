@@ -108,7 +108,8 @@ public class FruitSpawner {
 
 			fruit.registerWithShaker(shaker);
 			fruit.setBranchGroup(bg);
-			shaker.regisetWithCollisionDetector(detector);
+			fruit.regisetWithCollisionDetector(detector);
+
 
 			runner.addFruit(bg);
 			fruits.add(fruit);
@@ -121,6 +122,7 @@ public class FruitSpawner {
 			if(fruit.getDeleteFruit())
 			{
 				BranchGroup b = fruit.getBranchGroup(); 
+
 				it.remove();
 				runner.removeFruit(b);
 			}
