@@ -106,23 +106,25 @@ public class FruitSpawner {
 			PositionInterpolator posInt = new PositionInterpolator(xAlpha, fruit.getTransformGroup(), xAxis, -0.8f, 0.8f );
 			fruit.getTransformGroup().addChild(posInt);
 			bg.addChild(fruit);
-			detector = new CollisionDetector(bg);
+			detector = new CollisionDetector(fruit);
+//			detector = new CollisionDetector(bg);
 			bg.addChild(detector);
 			fruit.setBranchGroup(bg);
-			fruit.registerWithShaker(shaker);
-			shaker.regisetWithCollisionDetector(detector);
+			fruit.regisetWithCollisionDetector(detector);
 			runner.addFruit(bg);
 			
 			fruits.add(fruit);
 		}
 		
 		if(time>nextFruitTime/2){
-		for(Iterator<Fruit> it = fruits.iterator(); it.hasNext(); )
+		Iterator<Fruit> it = fruits.iterator();
+		while(it.hasNext())
 		{
+			Fruit f = it.next();
 			// set proper condition here
-			if(it.next().getDeleteFruit())
+			if(f.getDeleteFruit())
 			{
-				BranchGroup b = it.next().getBranchGroup(); 
+				BranchGroup b = f.getBranchGroup(); 
 				it.remove();
 				runner.removeFruit(b);
 			}

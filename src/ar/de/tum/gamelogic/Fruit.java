@@ -102,9 +102,24 @@ public class Fruit extends CubeObject {
 		
 	}
 
+	public void regisetWithCollisionDetector(CollisionDetector detector) {
+		// TODO Auto-generated method stub
+		detector.addObserver(new Notifiable() {
+			public void update(Object notifier, Object aData) {
+				if (aData instanceof Boolean)
+				handleCollisionInteraction(((Boolean)aData).booleanValue());
+			}
+		});
+	}
+	protected void handleCollisionInteraction(boolean booleanValue) {
+		// TODO Auto-generated method stub
+		System.out.println("Collision, print from fruit");
+		deleteFruit  = true;
+	}
+
 	protected void handleShakerInteraction() {
 		// TODO Auto-generated method stub
-		System.out.print("Collision, print from fruit");
+		System.out.println("Collision, print from fruit");
 		deleteFruit  = true;
 	}
 }
