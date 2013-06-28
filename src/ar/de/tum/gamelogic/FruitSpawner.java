@@ -6,12 +6,16 @@ import java.util.List;
 import java.util.Random;
 
 import javax.media.j3d.Alpha;
+import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.PositionInterpolator;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.vecmath.Vector3d;
 
+import de.tum.in.far.threedui.ex1.AnimationRotation;
+
+import ar.de.tum.animatios.FallingAnimation;
 import ar.de.tum.resources.Shaker;
 import ar.tum.de.gameengine.CollisionDetector;
 import ar.tum.de.main.Runner;
@@ -86,47 +90,41 @@ public class FruitSpawner {
 			nextFruitTime = rate.getTime();
 			time = 0;
 			
-			Fruit fruit = factory.getFruit();
-			
-			BranchGroup bg = new BranchGroup();
-			bg.setCapability(TransformGroup.ENABLE_COLLISION_REPORTING);
-			bg.setCapability(TransformGroup.ENABLE_PICK_REPORTING);
-			bg.setCapability(BranchGroup.ALLOW_DETACH);
-			detector = new CollisionDetector(bg);
-			
 			Transform3D t3dOffset = new Transform3D();
 			int x = rand.nextInt(xGridCount);
 			int y = rand.nextInt(yGridCount);
 			t3dOffset.setTranslation(new Vector3d(xgrid[x][y], ygrid[x][y], 0.25));
-			fruit.getTransformGroup().setTransform(t3dOffset);
-			
-			Transform3D xAxis = new Transform3D();
-  		    
-			Alpha xAlpha = new Alpha( -1, Alpha.DECREASING_ENABLE | Alpha.INCREASING_ENABLE, 1000, 1000, 5000, 1000, 1000, 10000, 2000, 4000 );
-			PositionInterpolator posInt = new PositionInterpolator(xAlpha, fruit.getTransformGroup(), xAxis, -0.8f, 0.8f );
-			fruit.getTransformGroup().addChild(posInt);
-			bg.addChild(fruit);
+			Fruit fruit = factory.getFruit();
+			fruit.setTranslation(t3dOffset);
+
+			BranchGroup bg = new BranchGroup();
+			bg.setCapability(TransformGroup.ENABLE_COLLISION_REPORTING);
+			bg.setCapability(TransformGroup.ENABLE_PICK_REPORTING);
+			bg.setCapability(BranchGroup.ALLOW_DETACH);
+
 			detector = new CollisionDetector(bg);
+			bg.addChild(fruit.getFallingAnimation());
 			bg.addChild(detector);
-			fruit.setBranchGroup(bg);
+
 			fruit.registerWithShaker(shaker);
+			fruit.setBranchGroup(bg);
 			shaker.regisetWithCollisionDetector(detector);
+
 			runner.addFruit(bg);
-			
 			fruits.add(fruit);
 		}
-		
-		if(time>nextFruitTime/2){
+
 		for(Iterator<Fruit> it = fruits.iterator(); it.hasNext(); )
 		{
-			// set proper condition here
-			if(it.next().getDeleteFruit())
+			Fruit fruit = it.next();
+			fruit.update();
+			if(fruit.getDeleteFruit())
 			{
-				BranchGroup b = it.next().getBranchGroup(); 
+				BranchGroup b = fruit.getBranchGroup(); 
 				it.remove();
 				runner.removeFruit(b);
 			}
 		}
-		}
+		
 	}
 }

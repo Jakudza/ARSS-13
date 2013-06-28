@@ -3,16 +3,17 @@ package ar.de.tum.gamelogic;
 
 
 import javax.media.j3d.BranchGroup;
+import javax.media.j3d.Transform3D;
 
-import de.tum.in.far.threedui.general.BlueAppearance;
+import ar.de.tum.animatios.FallingAnimation;
 import ar.de.tum.resources.FruitResources;
 import ar.de.tum.resources.Notifiable;
 import ar.de.tum.resources.Shaker;
-import ar.tum.de.gameengine.CollisionDetector;
 import ar.tum.de.main.CubeObject;
+import de.tum.in.far.threedui.general.BlueAppearance;
 
-public class Fruit extends CubeObject {
-
+public class Fruit {
+	
 	public interface OnDisappearListener {
 		void onDisappear(Fruit fruit);
 	}
@@ -48,6 +49,8 @@ public class Fruit extends CubeObject {
 	public static final String LOG_TAG = Fruit.class.getSimpleName();
 
 	private OnDisappearListener disappearListener;
+	
+	private FallingAnimation animation;
 
 	private Type type;
 
@@ -63,10 +66,20 @@ public class Fruit extends CubeObject {
 		R = r;
 	}
 
+	CubeObject cube = new CubeObject (0.013f, 0.013f, 0.013f, new BlueAppearance());
+	
 	public Fruit(Type type) {
-		super(0.013f, 0.013f, 0.013f, new BlueAppearance());
+		animation = new FallingAnimation(cube);
 		this.type = type;
 		System.out.println("Fruit created!");
+	}
+	
+	public FallingAnimation getFallingAnimation(){
+		return animation;
+	}
+	
+	public void setTranslation(Transform3D transform3d) {
+		cube.getTransformGroup().setTransform(transform3d);
 	}
 
 	public Type getType() {
@@ -78,15 +91,22 @@ public class Fruit extends CubeObject {
 		return deleteFruit;
 	}
 	
-	public void setBranchGroup(BranchGroup bg)
-	{
-		this.bg = bg;
+	public void update(){
+		if (animation.finished()) deleteFruit = true;
 	}
+	
+	private BranchGroup group;
+	
 	public BranchGroup getBranchGroup()
 	{
-		return bg;
+		return group;
 	}
-
+	
+	public void setBranchGroup(BranchGroup bg)
+	{
+		group = bg;
+	}
+	
 	public void registerWithShaker(Shaker s) {
 		// TODO Auto-generated method stub
 		shaker = s;
