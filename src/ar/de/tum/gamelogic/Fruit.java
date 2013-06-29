@@ -2,49 +2,88 @@ package ar.de.tum.gamelogic;
 
 
 
+import java.io.FileNotFoundException;
+
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Transform3D;
+import javax.media.j3d.TransformGroup;
+import javax.vecmath.AxisAngle4d;
+
+import org.jdesktop.j3d.loaders.vrml97.VrmlLoader;
 
 import ar.de.tum.animatios.FallingAnimation;
 import ar.de.tum.resources.FruitResources;
 import ar.de.tum.resources.Notifiable;
 import ar.de.tum.resources.Shaker;
 import ar.tum.de.gameengine.CollisionDetector;
-import ar.tum.de.main.CubeObject;
-import de.tum.in.far.threedui.general.BlueAppearance;
+
+import com.sun.j3d.loaders.IncorrectFormatException;
+import com.sun.j3d.loaders.ParsingErrorException;
+import com.sun.j3d.loaders.Scene;
+
+import de.tum.in.far.threedui.general.ModelObject;
 
 public class Fruit {
+	
+	public static VrmlLoader loader = new VrmlLoader();
+	
+	public static ModelObject loadModel(String path, float scale){
+		Scene myScene = null;
+		try {
+			myScene = loader.load(path);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IncorrectFormatException e) {
+			e.printStackTrace();
+		} catch (ParsingErrorException e) {
+			e.printStackTrace();
+		}
+
+		BranchGroup bg = new BranchGroup();
+		TransformGroup offset = new TransformGroup();
+		Transform3D t3d = new Transform3D();
+		t3d.setRotation(new AxisAngle4d(1.0, 0.0, 0.0, Math.PI/2));
+		t3d.setScale(scale);
+		
+		offset.setTransform(t3d);
+		bg.addChild(offset);
+		offset.addChild(myScene.getSceneGroup());
+		
+		return new ModelObject(bg);
+	}
 	
 	public interface OnDisappearListener {
 		void onDisappear(Fruit fruit);
 	}
 
-	public enum Type{
-	//  TODO this fruits commented temporarily 	
-	//	PLUM(R.image.plum, R.score.plum), KIWI(R.image.kiwi, R.score.kiwi), 
-	/*	STRAWBERRY(R.image.strawberry, R.score.strawberry, R.sImage.strawberry),
-		KNIFE(R.image.knife, R.score.knife, R.sImage.knife), 
-		PAPAYA(R.image.papaya, R.score.papaya, R.sImage.papaya),
-		APPLE(R.image.apple, R.score.apple, R.sImage.apple), 
-		GRAPE(R.image.grape, R.score.grape, R.sImage.grape), 
-		BANANA(R.image.banana, R.score.banana, R.sImage.banana), 
-		PINEAPPLE(R.image.pineapple, R.score.pineapple, R.sImage.pineapple), 
-		WATERMELON(R.image.watermelon, R.score.watermelon, R.sImage.watermelon), 
-		ORANGE(R.image.orange, R.score.orange, R.sImage.orange);*/
-		
-		ORANGE(R.score.orange);
+	public enum Type {
+
+		APPLE(R.score.apple, R.path.apple, R.scale.apple),
+		BANANA(R.score.banana, R.path.banana, R.scale.banana),
+		TABASCO(R.score.tabasco, R.path.tabasco, R.scale.tabasco),
+		MUSHROOM(R.score.mushroom, R.path.mushroom, R.scale.mushroom);
 	
 		private int score;
+		private String path;
+		private float scale;
 	
-		Type(int score){
+		Type(int score, String path, float scale){
 			this.score = score;
+			this.path = path;
+			this.scale = scale;
 		}
 		
+		public float getScale() {
+			return scale;
+		}
+
 		public int getScore() {
 			return score;
 		}
 
-
+		public String getPath() {
+			return path;
+		}
 	}
 
 	public static final String LOG_TAG = Fruit.class.getSimpleName();
@@ -67,10 +106,11 @@ public class Fruit {
 		R = r;
 	}
 
-	CubeObject cube = new CubeObject (0.013f, 0.013f, 0.013f, new BlueAppearance());
+	ModelObject model;
 	
 	public Fruit(Type type) {
-		animation = new FallingAnimation(cube);
+		model = loadModel(type.path, type.scale);
+		animation = new FallingAnimation(model);
 		this.type = type;
 		System.out.println("Fruit created!");
 	}
@@ -80,7 +120,7 @@ public class Fruit {
 	}
 	
 	public void setTranslation(Transform3D transform3d) {
-		cube.getTransformGroup().setTransform(transform3d);
+		model.getTransformGroup().setTransform(transform3d);
 	}
 
 	public Type getType() {

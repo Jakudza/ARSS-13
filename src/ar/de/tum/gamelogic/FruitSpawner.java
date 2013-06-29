@@ -22,10 +22,10 @@ import ar.tum.de.main.Runner;
 
 public class FruitSpawner {
 
-	public static final double xGridSize = 0.5;
-	public static final double yGridSize = 0.5;
-	public static final int xGridCount = 4;
-	public static final int yGridCount = 4;
+	public static final double xGridSize = 0.25;
+	public static final double yGridSize = 0.25;
+	public static final int xGridCount = 3;
+	public static final int yGridCount = 3;
 	private Random rand = new Random();
 	private CollisionDetector detector;
 	private List<Fruit> fruits;

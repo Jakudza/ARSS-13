@@ -53,8 +53,7 @@ public class MainIngredientFactory implements IngredientFactory {
 
 	@Override
 	public Fruit getFruit() {
-		return new Fruit(Fruit.Type.ORANGE);
-		/*int targetFruitCount =  random.nextInt((int)((totalFruits - 1) * FRUIT_RANDOM_FACTOR));
+		int targetFruitCount =  random.nextInt((int)((totalFruits - 1) * FRUIT_RANDOM_FACTOR));
 
 		Fruit.Type targetFruit = null;
 		int currentCount = 0;
@@ -67,7 +66,7 @@ public class MainIngredientFactory implements IngredientFactory {
 			}
 		}
 
-		return targetFruit != null ? new Fruit(targetFruit) : new Fruit(choiceStrategy.getFruitType(otherFruits));*/
+		return targetFruit != null ? new Fruit(targetFruit) : new Fruit(choiceStrategy.getFruitType(otherFruits));
 	}
 
 }

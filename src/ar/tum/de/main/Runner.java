@@ -156,13 +156,13 @@ public class Runner implements GameConstants {
 	
 	private void inititalizeGameFlow(){
 		Receipt receipt = Receipt.createBuilder()
-				 .addFruits(Fruit.Type.ORANGE, 5)
+				 .addFruits(Fruit.Type.BANANA, 5)
 				 .commit();
 		GameRule successRule = new ReceiptBuildedRule(receipt);
 		SpoiledRecipeRule failRule = new SpoiledRecipeRule(MAX_NUMBER_OF_FAILS, IGNORE_FAIL_TIME);
 		gameEngine = new CocktailGameEngine(successRule, failRule, receipt);
 		
-		spawner = new FruitSpawner(Emission.XSLOW, new MainIngredientFactory(receipt.copy(), new BaseRandomChoiceStrategy()), this);
+		spawner = new FruitSpawner(Emission.MEDIUM, new MainIngredientFactory(receipt.copy(), new BaseRandomChoiceStrategy()), this);
 		spawner.setShaker(shaker);
 		Timer timer = new Timer();
 		TimerTask task = new TimerTask() {
