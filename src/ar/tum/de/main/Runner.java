@@ -17,10 +17,12 @@ import org.jdesktop.j3d.loaders.vrml97.VrmlLoader;
 import ar.de.tum.gamelogic.BaseRandomChoiceStrategy;
 import ar.de.tum.gamelogic.Bottle;
 import ar.de.tum.gamelogic.Fruit;
+import ar.de.tum.gamelogic.Fruit.FruitListener;
+import ar.de.tum.gamelogic.Fruit.Type;
 import ar.de.tum.gamelogic.FruitSpawner;
+import ar.de.tum.gamelogic.FruitSpawner.Emission;
 import ar.de.tum.gamelogic.MainIngredientFactory;
 import ar.de.tum.gamelogic.Receipt;
-import ar.de.tum.gamelogic.FruitSpawner.Emission;
 import ar.de.tum.resources.BottleResources;
 import ar.de.tum.resources.FruitResources;
 import ar.de.tum.resources.GameScoreResources;
@@ -28,7 +30,6 @@ import ar.de.tum.resources.PoseReceiverShaker;
 import ar.de.tum.resources.Shaker;
 import ar.tum.de.gameengine.CocktailGameEngine;
 import ar.tum.de.gameengine.CollisionDetector;
-import ar.tum.de.gameengine.GameEngine;
 import ar.tum.de.gameengine.GameRule;
 import ar.tum.de.gameengine.GameScore;
 import ar.tum.de.gameengine.rules.ReceiptBuildedRule;
@@ -47,7 +48,7 @@ import de.tum.in.far.threedui.general.PoseReceiver;
 import de.tum.in.far.threedui.general.UbitrackFacade;
 import de.tum.in.far.threedui.general.ViewerUbitrack;
 
-public class Runner implements GameConstants {
+public class Runner implements GameConstants, FruitListener {
 
 	public static final String GAME = "Cocktail Master";
 	
@@ -65,7 +66,7 @@ public class Runner implements GameConstants {
 	private PoseReceiver poseReceiver2;
 	private ImageReceiver imageReceiver;
 	
-	private GameEngine gameEngine;
+	private CocktailGameEngine gameEngine;
 	private FruitSpawner spawner;
 	private Shaker shaker;
 	private CollisionDetector detector;
@@ -200,6 +201,16 @@ public class Runner implements GameConstants {
 		// TODO Auto-generated method stub
 		sheepObject.getTransformGroup().removeChild(b);
 		
+	}
+
+	@Override
+	public void onCollideWithShaker(Type fruit) {
+		gameEngine.onFruitCatched(fruit);
+	}
+
+	@Override
+	public void onCollideWithGround(Type fruit) {
+		gameEngine.onFruitMissed(fruit);
 	}	
 	
 }

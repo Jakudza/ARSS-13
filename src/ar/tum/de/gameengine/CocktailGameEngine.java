@@ -52,11 +52,13 @@ public class CocktailGameEngine extends GameEngine{
 
 	public void onFruitMissed(Fruit.Type fruitType){
 	//	if (Log.VERBOSE) Log.v(LOG_TAG, "missed " + fruitType);
+		System.out.println(LOG_TAG + " Missed: " + fruitType);
 		actionOcurred(GameActionFactory.createFruitMissedAction(fruitType, currentProgress.getIngredient(fruitType) != null));
 	}
 
 	public void onFruitCatched(Fruit.Type fruitType){
 	//	if (Log.VERBOSE) Log.v(LOG_TAG, "catched " + fruitType);
+		System.out.println(LOG_TAG + " Catched: " + fruitType);
 		Ingredient<Fruit.Type> fruit = currentProgress.getIngredient(fruitType);
 		actionOcurred(GameActionFactory.createFruitCatchedAction(fruitType, fruit != null));
 		

@@ -95,6 +95,7 @@ public class FruitSpawner {
 			int y = rand.nextInt(yGridCount);
 			t3dOffset.setTranslation(new Vector3d(xgrid[x][y], ygrid[x][y], 0.25));
 			Fruit fruit = factory.getFruit();
+			fruit.setCollisionListner(runner);
 			fruit.setTranslation(t3dOffset);
 
 			BranchGroup bg = new BranchGroup();

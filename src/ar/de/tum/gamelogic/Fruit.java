@@ -25,6 +25,13 @@ import de.tum.in.far.threedui.general.ModelObject;
 
 public class Fruit {
 	
+	public interface FruitListener {
+		
+		void onCollideWithShaker(Fruit.Type fruit);
+		
+		void onCollideWithGround(Fruit.Type fruit);
+	}
+	
 	public static VrmlLoader loader = new VrmlLoader();
 	
 	public static ModelObject loadModel(String path, float scale){
@@ -92,6 +99,8 @@ public class Fruit {
 	
 	private FallingAnimation animation;
 
+	private FruitListener listener;
+	
 	private Type type;
 
 	private boolean deleteFruit = false;
@@ -133,7 +142,10 @@ public class Fruit {
 	}
 	
 	public void update(){
-		if (animation.finished()) deleteFruit = true;
+		if (animation.finished()) { 
+			if (listener != null) listener.onCollideWithGround(type);
+			deleteFruit = true;
+		}
 	}
 	
 	private BranchGroup group;
@@ -163,6 +175,10 @@ public class Fruit {
 		
 	}
 
+	public void setCollisionListner(FruitListener listener) {
+		this.listener = listener;
+	}
+	
 	public void regisetWithCollisionDetector(CollisionDetector detector) {
 		// TODO Auto-generated method stub
 		detector.addObserver(new Notifiable() {
@@ -174,6 +190,7 @@ public class Fruit {
 	}
 	protected void handleCollisionInteraction(boolean booleanValue) {
 		// TODO Auto-generated method stub
+		if (listener != null) listener.onCollideWithShaker(type);
 		System.out.println("Collision, print from fruit");
 		deleteFruit  = true;
 	}
