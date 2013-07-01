@@ -23,6 +23,8 @@ import ar.de.tum.gamelogic.FruitSpawner;
 import ar.de.tum.gamelogic.FruitSpawner.Emission;
 import ar.de.tum.gamelogic.MainIngredientFactory;
 import ar.de.tum.gamelogic.Receipt;
+import ar.de.tum.gamelogic.ShakingAnalyzer;
+import ar.de.tum.gamelogic.ShakingAnalyzer.ShakingOracle;
 import ar.de.tum.resources.BottleResources;
 import ar.de.tum.resources.FruitResources;
 import ar.de.tum.resources.GameScoreResources;
@@ -48,7 +50,7 @@ import de.tum.in.far.threedui.general.PoseReceiver;
 import de.tum.in.far.threedui.general.UbitrackFacade;
 import de.tum.in.far.threedui.general.ViewerUbitrack;
 
-public class Runner implements GameConstants, FruitListener {
+public class Runner implements GameConstants, FruitListener, ShakingOracle {
 
 	public static final String GAME = "Cocktail Master";
 	
@@ -81,15 +83,15 @@ public class Runner implements GameConstants, FruitListener {
 		runner.initializeJava3D();
 		runner.initializeResources();
 		runner.loadSheep();
-		runner.initializeUbitrack();
 		runner.inititalizeGameFlow();
+		runner.initializeUbitrack();
 		System.out.println("End of main");
 	}
 	
 	private void initializeUbitrack() {
 		ubitrackFacade.initUbitrack();
 		
-		shakerPoseReceiver = new PoseReceiverShaker();
+		shakerPoseReceiver = new PoseReceiverShaker(new ShakingAnalyzer(this));
 		if (!ubitrackFacade.setPoseCallback("posesink", shakerPoseReceiver)) {
 			return;
 		}
@@ -211,6 +213,21 @@ public class Runner implements GameConstants, FruitListener {
 	@Override
 	public void onCollideWithGround(Type fruit) {
 		gameEngine.onFruitMissed(fruit);
+	}
+
+	@Override
+	public boolean isShakingValid() {
+		return gameEngine.isGameOver();
+	}
+
+	@Override
+	public void onShakingFinished(int points) {
+		System.out.println("Shaking finished, points  =" + points);
+	}
+
+	@Override
+	public void onShakingStarted() {
+		System.out.println("Shaking started");
 	}	
 	
 }

@@ -11,7 +11,7 @@ import javax.vecmath.AxisAngle4d;
 
 import org.jdesktop.j3d.loaders.vrml97.VrmlLoader;
 
-import ar.de.tum.animatios.FallingAnimation;
+import ar.de.tum.animations.FallingAnimation;
 import ar.de.tum.resources.FruitResources;
 import ar.de.tum.resources.Notifiable;
 import ar.de.tum.resources.Shaker;

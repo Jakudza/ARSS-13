@@ -15,7 +15,7 @@ import javax.vecmath.Vector3d;
 
 import de.tum.in.far.threedui.ex1.AnimationRotation;
 
-import ar.de.tum.animatios.FallingAnimation;
+import ar.de.tum.animations.FallingAnimation;
 import ar.de.tum.resources.Shaker;
 import ar.tum.de.gameengine.CollisionDetector;
 import ar.tum.de.main.Runner;

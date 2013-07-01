@@ -3,8 +3,9 @@ package ar.de.tum.resources;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import ubitrack.SimplePose;
+import ar.de.tum.gamelogic.ShakingAnalyzer;
 import de.tum.in.far.threedui.general.PoseReceiver;
-import ar.tum.de.gameengine.NotifyTransformGroup;
 
 public class PoseReceiverShaker extends PoseReceiver  {
 
@@ -15,7 +16,10 @@ public class PoseReceiverShaker extends PoseReceiver  {
 	private boolean statePressed;
 	private boolean initialized = false;
 	
-	public PoseReceiverShaker() {
+	private ShakingAnalyzer analyzer; 
+	
+	public PoseReceiverShaker(ShakingAnalyzer analyzer) {
+		this.analyzer = analyzer;
 		observer = null;
 		final Object observee = this;
 		Timer t = new Timer();
@@ -40,9 +44,19 @@ public class PoseReceiverShaker extends PoseReceiver  {
 		};
 		t.scheduleAtFixedRate(tt, 0, TIME_OUT/10);	
 	}
+	
 	public void setObserver(Notifiable o) {
 		observer = o;
-		
+	}
+	
+	@Override
+	public void receivePose(SimplePose pose) {
+		super.receivePose(pose);
+		double[] trans = new double[3];
+		trans[0] = pose.getTx();
+		trans[1] = pose.getTy();
+		trans[2] = pose.getTz();
+		analyzer.receiveNewPose(trans);
 	}
 
 }

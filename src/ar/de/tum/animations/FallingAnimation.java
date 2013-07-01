@@ -1,4 +1,4 @@
-package ar.de.tum.animatios;
+package ar.de.tum.animations;
 
 import javax.media.j3d.Alpha;
 import javax.media.j3d.BoundingSphere;

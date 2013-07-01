@@ -20,7 +20,8 @@ public abstract class GameEngine {
 	}
 	
 	public void actionOcurred(GameAction action){
-		if (gameOver) throw new IllegalStateException("Game is over! No actions accepted");
+	    if (gameOver) return;
+		//	if (gameOver) throw new IllegalStateException("Game is over! No actions accepted");
 		
 		if (isGameOver(successRule, action) && listener != null) listener.onGameSuccess();
 		if (isGameOver(failRule, action) && listener != null) listener.onGameFail();
