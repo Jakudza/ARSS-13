@@ -8,12 +8,17 @@ import java.util.Random;
 import javax.media.j3d.Alpha;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
+import javax.media.j3d.GeometryArray;
 import javax.media.j3d.PositionInterpolator;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
+import javax.vecmath.AxisAngle4d;
+import javax.vecmath.Color3f;
 import javax.vecmath.Vector3d;
 
 import de.tum.in.far.threedui.ex1.AnimationRotation;
+import de.tum.in.far.threedui.ex1.SphereObject;
+import de.tum.in.far.threedui.general.FakeShadow;
 
 import ar.de.tum.animations.FallingAnimation;
 import ar.de.tum.resources.Shaker;
@@ -111,8 +116,24 @@ public class FruitSpawner {
 			fruit.setBranchGroup(bg);
 			fruit.regisetWithCollisionDetector(detector);
 
+			// Shadow
+			BranchGroup shadowBg = new BranchGroup();
+			shadowBg.setCapability(BranchGroup.ALLOW_DETACH);
+			
+			SphereObject s = new SphereObject(0.01f);
+			FakeShadow fs = new FakeShadow((GeometryArray) s.getGeometry(), new Color3f(0.2f, 0.2f, 0.2f));
 
+			Transform3D fruitShadowT3D = new Transform3D();
+			fruitShadowT3D.setTranslation(new Vector3d(xgrid[x][y], ygrid[x][y], 0.001));
+			fruitShadowT3D.setRotation(new AxisAngle4d(1.0, 0.0, 0.0, Math.PI/2));
+			fs.getTransformGroup().setTransform(fruitShadowT3D);
+			
+			shadowBg.addChild(fs);
+			fruit.addShadow(shadowBg);
+			
+			
 			runner.addFruit(bg);
+			runner.addShadow(shadowBg);
 			fruits.add(fruit);
 		}
 
@@ -123,9 +144,11 @@ public class FruitSpawner {
 			if(fruit.getDeleteFruit())
 			{
 				BranchGroup b = fruit.getBranchGroup(); 
+				BranchGroup shadowBg = fruit.getShadow();
 
 				it.remove();
 				runner.removeFruit(b);
+				runner.removeShadow(shadowBg);
 			}
 		}
 		

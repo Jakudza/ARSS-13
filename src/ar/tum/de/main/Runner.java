@@ -228,7 +228,19 @@ public class Runner implements GameConstants, FruitListener, ShakingOracle {
 	@Override
 	public void onShakingStarted() {
 		System.out.println("Shaking started");
+	}
+
+	public void addShadow(BranchGroup bg) {
+		// TODO Auto-generated method stub
+		sheepObject.getTransformGroup().addChild(bg);
 	}	
+	
+	public void removeShadow(BranchGroup bg) {
+		// TODO Auto-generated method stub
+		sheepObject.getTransformGroup().removeChild(bg);
+		
+	}
+
 	
 }
 

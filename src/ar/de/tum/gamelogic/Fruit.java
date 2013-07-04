@@ -149,6 +149,8 @@ public class Fruit {
 	}
 	
 	private BranchGroup group;
+
+	private BranchGroup shadowBg;
 	
 	public BranchGroup getBranchGroup()
 	{
@@ -199,6 +201,16 @@ public class Fruit {
 		// TODO Auto-generated method stub
 		System.out.println("Collision, print from fruit");
 		deleteFruit  = true;
+	}
+
+	public void addShadow(BranchGroup shadowBg) {
+		// TODO Auto-generated method stub
+		this.shadowBg = shadowBg;
+	}
+
+	public BranchGroup getShadow() {
+		// TODO Auto-generated method stub
+		return shadowBg;
 	}
 }
 
