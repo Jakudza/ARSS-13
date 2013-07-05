@@ -159,7 +159,7 @@ public class Runner implements GameConstants, FruitListener, ShakingOracle {
 	
 	private void inititalizeGameFlow(){
 		Receipt receipt = Receipt.createBuilder()
-				 .addFruits(Fruit.Type.BANANA, 5)
+				 .addFruits(Fruit.Type.BANANA, 2)
 				 .commit();
 		GameRule successRule = new ReceiptBuildedRule(receipt);
 		SpoiledRecipeRule failRule = new SpoiledRecipeRule(MAX_NUMBER_OF_FAILS, IGNORE_FAIL_TIME);

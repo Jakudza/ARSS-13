@@ -15,7 +15,7 @@ public class ShakingAnalyzer {
 	private static final int length = 30;
 	private static final long SHAKING_DURATION = 3000l;
 	private static final long SHAKING_DELAY = 200l;
-	private static final double SHAKING_HIGH_MARGIN = 0.2;
+	private static final double SHAKING_HIGH_MARGIN = 0.17;
 
 	private double[][] poses =  new double[length][3];
 	private long[] time = new long[length];

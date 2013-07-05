@@ -45,7 +45,7 @@ public class Shaker implements Notifiable {
 		
 		try
 		    {
-		      scene = objFileloader.load( "C:/Users/Anders/workspace/3DUI-project/models/shaker.obj" );
+		      scene = objFileloader.load(FruitResources.COMMON_PATH+"shaker.obj" );
 		      
 		    }
 		    catch ( Exception e )
@@ -58,7 +58,7 @@ public class Shaker implements Notifiable {
 		      System.exit( 1 );
 
 		    Transform3D t3d = new Transform3D();
-		    t3d.setScale(0.05);
+		    t3d.setScale(0.02);
 		    t3d.setRotation(new AxisAngle4d(1.0, 0.0, 0.0, Math.PI/2));
 		    t3d.setTranslation(new Vector3d(0.0, 0.0, 0.05));
 		    TransformGroup tg = new TransformGroup();

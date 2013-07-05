@@ -25,7 +25,7 @@ public class ImageReceiver extends SimpleImageReceiver {
 
 	public static final int X_PIXEL = 320;
 	public static final int Y_PIXEL = 240;
-	public static final boolean FLIP_Y = true;
+	public static final boolean FLIP_Y = false;
 	
 	/**
 	 * SKIP_FRAMES defines how many frames are skipped before
