@@ -33,7 +33,6 @@ import ar.de.tum.resources.PoseReceiverShaker;
 import ar.de.tum.resources.Shaker;
 import ar.tum.de.gameengine.CocktailGameEngine;
 import ar.tum.de.gameengine.CocktailGameEngine.ProgressListener;
-import ar.tum.de.gameengine.CollisionDetector;
 import ar.tum.de.gameengine.GameEngineListener;
 import ar.tum.de.gameengine.GameRule;
 import ar.tum.de.gameengine.GameScore;
@@ -51,7 +50,6 @@ import de.tum.in.far.threedui.general.BinaryEnv;
 import de.tum.in.far.threedui.general.BlueAppearance;
 import de.tum.in.far.threedui.general.ImageReceiver;
 import de.tum.in.far.threedui.general.ModelObject;
-import de.tum.in.far.threedui.general.PoseReceiver;
 import de.tum.in.far.threedui.general.TextDrawer;
 import de.tum.in.far.threedui.general.UbitrackFacade;
 import de.tum.in.far.threedui.general.ViewerUbitrack;
@@ -67,7 +65,6 @@ public class Runner implements GameConstants, FruitListener, ShakingOracle, Prog
 	private ViewerUbitrack viewer;
 	private UbitrackFacade ubitrackFacade;				
 
-//	private CubeObject cubeObject;
 	private ModelObject sheepObject;
 	
 	private PoseReceiverShaker shakerPoseReceiver;
@@ -77,8 +74,10 @@ public class Runner implements GameConstants, FruitListener, ShakingOracle, Prog
 	private CocktailGameEngine gameEngine;
 	private FruitSpawner spawner;
 	private Shaker shaker;
-	private CollisionDetector detector;
+
 	private TextDrawer drawer;
+	
+	private TimerTask task;
 	
 	public Runner() {
 		ubitrackFacade = new UbitrackFacade();
@@ -116,7 +115,6 @@ public class Runner implements GameConstants, FruitListener, ShakingOracle, Prog
 		imageReceiver.setBackground(backgroundObject.getBackground());
 		
 		shaker.setPoseReceiver(shakerPoseReceiver);
-	//	poseReceiver.setTransformGroup(cubeObject.getTransformGroup());		
 		poseReceiver2.setTransformGroup(sheepObject.getTransformGroup());		
 
 		ubitrackFacade.startDataflow();
@@ -149,7 +147,6 @@ public class Runner implements GameConstants, FruitListener, ShakingOracle, Prog
 		
 		sheepObject = new ModelObject(bg);
 		sheepObject.setCapability(Group.ALLOW_CHILDREN_EXTEND);
-	//	sheepObject.getTransformGroup().addChild(new Fruit(Fruit.Type.ORANGE));
 		viewer.addObject(sheepObject);
 		
 
@@ -160,11 +157,6 @@ public class Runner implements GameConstants, FruitListener, ShakingOracle, Prog
 		System.out.println("Creating Viewer - " + GAME);
 		viewer = new ViewerUbitrack(GAME, ubitrackFacade);
 		viewer.addObject(shaker.getJ3dObject());
-		BlueAppearance blueAppearance = new BlueAppearance();
-		
-	//	cubeObject = new CubeObject(0.023f, 0.023f, 0.023f, blueAppearance);
-	//	viewer.addObject(cubeObject);
-		
 		System.out.println("Done");
 	}
 	
@@ -177,11 +169,12 @@ public class Runner implements GameConstants, FruitListener, ShakingOracle, Prog
 		SpoiledRecipeRule failRule = new SpoiledRecipeRule(MAX_NUMBER_OF_FAILS, IGNORE_FAIL_TIME);
 		gameEngine = new CocktailGameEngine(successRule, failRule, receipt);
 		gameEngine.setProgressListener(this);
+		gameEngine.setListener(this);
 		
 		spawner = new FruitSpawner(Emission.MEDIUM, new MainIngredientFactory(receipt.copy(), new BaseRandomChoiceStrategy()), this);
 		spawner.setShaker(shaker);
 		Timer timer = new Timer();
-		TimerTask task = new TimerTask() {
+		task = new TimerTask() {
 			
 			@Override
 			public void run() {
@@ -203,6 +196,7 @@ public class Runner implements GameConstants, FruitListener, ShakingOracle, Prog
 	private long lastTimeStamp = System.currentTimeMillis();
 	
 	private void update(){
+		
 		long delta = System.currentTimeMillis() - lastTimeStamp;
 		lastTimeStamp = System.currentTimeMillis();
 		spawner.update(delta);
@@ -279,12 +273,12 @@ public class Runner implements GameConstants, FruitListener, ShakingOracle, Prog
 
 	@Override
 	public void onGameSuccess() {
-		// TODO Auto-generated method stub
-		
+		spawner.stop();
 	}
 
 	@Override
 	public void onGameFail() {
+		spawner.stop();
 		drawer.gameOver();
 	}
 

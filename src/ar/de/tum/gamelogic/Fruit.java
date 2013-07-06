@@ -121,7 +121,6 @@ public class Fruit {
 		model = loadModel(type.path, type.scale);
 		animation = new FallingAnimation(model);
 		this.type = type;
-		System.out.println("Fruit created!");
 	}
 	
 	public FallingAnimation getFallingAnimation(){
@@ -191,15 +190,11 @@ public class Fruit {
 		});
 	}
 	protected void handleCollisionInteraction(boolean booleanValue) {
-		// TODO Auto-generated method stub
 		if (listener != null) listener.onCollideWithShaker(type);
-		System.out.println("Collision, print from fruit");
 		deleteFruit  = true;
 	}
 
 	protected void handleShakerInteraction() {
-		// TODO Auto-generated method stub
-		System.out.println("Collision, print from fruit");
 		deleteFruit  = true;
 	}
 

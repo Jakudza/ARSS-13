@@ -79,6 +79,12 @@ public class FruitSpawner {
 		}
 	}
 	
+	private boolean stopped = false;
+	
+	public void stop(){
+		stopped = true;
+	}
+	
 	public void setDetector(CollisionDetector d)
 	{
 		detector = d;
@@ -91,7 +97,7 @@ public class FruitSpawner {
 	
 	public void update(long delta) {
 		time += delta;
-		if (time > nextFruitTime) {
+		if (time > nextFruitTime && !stopped) {
 			nextFruitTime = rate.getTime();
 			time = 0;
 			
