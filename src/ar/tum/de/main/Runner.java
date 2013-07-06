@@ -23,6 +23,7 @@ import ar.de.tum.gamelogic.FruitSpawner;
 import ar.de.tum.gamelogic.FruitSpawner.Emission;
 import ar.de.tum.gamelogic.MainIngredientFactory;
 import ar.de.tum.gamelogic.Receipt;
+import ar.de.tum.gamelogic.Receipt.Ingredient;
 import ar.de.tum.gamelogic.ShakingAnalyzer;
 import ar.de.tum.gamelogic.ShakingAnalyzer.ShakingOracle;
 import ar.de.tum.resources.BottleResources;
@@ -31,9 +32,12 @@ import ar.de.tum.resources.GameScoreResources;
 import ar.de.tum.resources.PoseReceiverShaker;
 import ar.de.tum.resources.Shaker;
 import ar.tum.de.gameengine.CocktailGameEngine;
+import ar.tum.de.gameengine.CocktailGameEngine.ProgressListener;
 import ar.tum.de.gameengine.CollisionDetector;
+import ar.tum.de.gameengine.GameEngineListener;
 import ar.tum.de.gameengine.GameRule;
 import ar.tum.de.gameengine.GameScore;
+import ar.tum.de.gameengine.GameScore.Modifier;
 import ar.tum.de.gameengine.rules.ReceiptBuildedRule;
 import ar.tum.de.gameengine.rules.SpoiledRecipeRule;
 
@@ -47,10 +51,11 @@ import de.tum.in.far.threedui.general.BlueAppearance;
 import de.tum.in.far.threedui.general.ImageReceiver;
 import de.tum.in.far.threedui.general.ModelObject;
 import de.tum.in.far.threedui.general.PoseReceiver;
+import de.tum.in.far.threedui.general.TextDrawer;
 import de.tum.in.far.threedui.general.UbitrackFacade;
 import de.tum.in.far.threedui.general.ViewerUbitrack;
 
-public class Runner implements GameConstants, FruitListener, ShakingOracle {
+public class Runner implements GameConstants, FruitListener, ShakingOracle, ProgressListener, GameEngineListener {
 
 	public static final String GAME = "Cocktail Master";
 	
@@ -72,6 +77,7 @@ public class Runner implements GameConstants, FruitListener, ShakingOracle {
 	private FruitSpawner spawner;
 	private Shaker shaker;
 	private CollisionDetector detector;
+	private TextDrawer drawer;
 	
 	public Runner() {
 		ubitrackFacade = new UbitrackFacade();
@@ -136,12 +142,16 @@ public class Runner implements GameConstants, FruitListener, ShakingOracle {
 		
 		offset.setTransform(t3d);
 		bg.addChild(offset);
+		drawer = new TextDrawer(new BlueAppearance());
+		bg.addChild(drawer);
 		offset.addChild(myScene.getSceneGroup());
 		
 		sheepObject = new ModelObject(bg);
 		sheepObject.setCapability(Group.ALLOW_CHILDREN_EXTEND);
 	//	sheepObject.getTransformGroup().addChild(new Fruit(Fruit.Type.ORANGE));
 		viewer.addObject(sheepObject);
+		
+
 		System.out.println("Sheep loaded");
 	}
 	
@@ -159,11 +169,14 @@ public class Runner implements GameConstants, FruitListener, ShakingOracle {
 	
 	private void inititalizeGameFlow(){
 		Receipt receipt = Receipt.createBuilder()
-				 .addFruits(Fruit.Type.BANANA, 2)
+				 .addFruits(Fruit.Type.BANANA, 3)
+				 .addFruits(Fruit.Type.APPLE, 3)
+				 .addFruits(Fruit.Type.TABASCO, 2)
 				 .commit();
 		GameRule successRule = new ReceiptBuildedRule(receipt);
 		SpoiledRecipeRule failRule = new SpoiledRecipeRule(MAX_NUMBER_OF_FAILS, IGNORE_FAIL_TIME);
 		gameEngine = new CocktailGameEngine(successRule, failRule, receipt);
+		gameEngine.setProgressListener(this);
 		
 		spawner = new FruitSpawner(Emission.MEDIUM, new MainIngredientFactory(receipt.copy(), new BaseRandomChoiceStrategy()), this);
 		spawner.setShaker(shaker);
@@ -222,12 +235,12 @@ public class Runner implements GameConstants, FruitListener, ShakingOracle {
 
 	@Override
 	public void onShakingFinished(int points) {
-		System.out.println("Shaking finished, points  =" + points);
+		drawer.finalScore(points + gameEngine.getScore());
 	}
 
 	@Override
 	public void onShakingStarted() {
-		System.out.println("Shaking started");
+		drawer.shaked();
 	}
 
 	public void addShadow(BranchGroup bg) {
@@ -239,6 +252,40 @@ public class Runner implements GameConstants, FruitListener, ShakingOracle {
 		// TODO Auto-generated method stub
 		sheepObject.getTransformGroup().removeChild(bg);
 		
+	}
+
+	@Override
+	public void onChangedScore(int oldScore, int newScore) {
+		drawer.changeScore(newScore);
+	}
+
+	@Override
+	public void onChangedModifier(Modifier oldModifier, Modifier newModifier) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onChangedBottleIngredient(Ingredient<ar.de.tum.gamelogic.Bottle.Type> bottleType) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onChangedFruitIngredient(Ingredient<Type> fruitType) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onGameSuccess() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onGameFail() {
+		drawer.gameOver();
 	}
 
 	

@@ -115,4 +115,8 @@ public class CocktailGameEngine extends GameEngine{
 			}
 		}
 	}
+	
+	public int getScore(){
+		return score.getScore();
+	}
 }
