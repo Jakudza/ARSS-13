@@ -45,6 +45,7 @@ import com.sun.j3d.loaders.IncorrectFormatException;
 import com.sun.j3d.loaders.ParsingErrorException;
 import com.sun.j3d.loaders.Scene;
 
+import de.tum.in.far.threedui.general.AveragePoseReciever;
 import de.tum.in.far.threedui.general.BackgroundObject;
 import de.tum.in.far.threedui.general.BinaryEnv;
 import de.tum.in.far.threedui.general.BlueAppearance;
@@ -70,7 +71,7 @@ public class Runner implements GameConstants, FruitListener, ShakingOracle, Prog
 	private ModelObject sheepObject;
 	
 	private PoseReceiverShaker shakerPoseReceiver;
-	private PoseReceiver poseReceiver2;
+	private AveragePoseReciever poseReceiver2;
 	private ImageReceiver imageReceiver;
 	
 	private CocktailGameEngine gameEngine;
@@ -101,7 +102,7 @@ public class Runner implements GameConstants, FruitListener, ShakingOracle, Prog
 		if (!ubitrackFacade.setPoseCallback("posesink", shakerPoseReceiver)) {
 			return;
 		}
-		poseReceiver2 = new PoseReceiver();
+		poseReceiver2 = new AveragePoseReciever(10);
 		if (!ubitrackFacade.setPoseCallback("posesink2", poseReceiver2)) {
 			return;
 		}
@@ -171,7 +172,6 @@ public class Runner implements GameConstants, FruitListener, ShakingOracle, Prog
 		Receipt receipt = Receipt.createBuilder()
 				 .addFruits(Fruit.Type.BANANA, 3)
 				 .addFruits(Fruit.Type.APPLE, 3)
-				 .addFruits(Fruit.Type.TABASCO, 2)
 				 .commit();
 		GameRule successRule = new ReceiptBuildedRule(receipt);
 		SpoiledRecipeRule failRule = new SpoiledRecipeRule(MAX_NUMBER_OF_FAILS, IGNORE_FAIL_TIME);
